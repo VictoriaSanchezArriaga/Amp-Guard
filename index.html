@@ -9,15 +9,11 @@
 
     <link rel="stylesheet" href="estilo.css">
 
-    <!-- Librería para gráficas -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-    <!-- ==============================
-         HEADER
-         ============================== -->
 
     <header>
         <h1>AMP-GUARD</h1>
@@ -27,9 +23,7 @@
 
     <main>
 
-        <!-- ==============================
-             ESTADO DEL SISTEMA
-             ============================== -->
+        
 
         <section class="estado-panel">
 
@@ -82,13 +76,9 @@
         </section>
 
 
-        <!-- ==============================
-             NIVEL DE AUDIO
-             ============================== -->
-
         <section class="panel">
 
-            <h2>🔊 Nivel de audio</h2>
+            <h2> Nivel de audio</h2>
 
             <div class="barra">
 
@@ -101,44 +91,40 @@
         </section>
 
 
-        <!-- ==============================
-             GRÁFICA
-             ============================== -->
+    
 
         <section class="panel">
 
-            <h2>📈 Monitor en tiempo real</h2>
+            <h2>Monitor en tiempo real</h2>
 
             <canvas id="grafica"></canvas>
 
         </section>
 
 
-        <!-- ==============================
-             CONTROLES
-             ============================== -->
+ 
 
         <section class="panel">
 
-            <h2>⚙️ Control del sistema</h2>
+            <h2>Control del sistema</h2>
 
             <div class="controles">
 
                 <button id="btnVentiladorOn"
                         onclick="activarVentilador()">
-                    💨 Encender ventilador
+                    Encender ventilador
                 </button>
 
 
                 <button id="btnVentiladorOff"
                         onclick="desactivarVentilador()">
-                    🛑 Apagar ventilador
+                     Apagar ventilador
                 </button>
 
 
                 <button id="btnPrueba"
                         onclick="iniciarPrueba()">
-                    🧪 Iniciar prueba
+                     Iniciar prueba
                 </button>
 
             </div>
@@ -150,18 +136,14 @@
         </section>
 
 
-        <!-- ==============================
-             ALERTAS
-             ============================== -->
-
         <section class="panel">
 
-            <h2>🚨 Alertas</h2>
+            <h2>Alertas</h2>
 
             <div id="alertas">
 
                 <div class="alerta">
-                    ⚠️ Esperando conexión con el ESP32...
+                    Esperando conexión con el ESP32...
                 </div>
 
             </div>
@@ -171,9 +153,7 @@
     </main>
 
 
-    <!-- ==============================
-         FOOTER
-         ============================== -->
+
 
     <footer>
 
@@ -182,6 +162,7 @@
         <p>
             Sistema de monitoreo basado en ESP32
         </p>
+        <p></p>
         <p>
             Victoria Sánchez Arriaga, Ariel Sánchez Avila, Irving Aguayo Perez,
         </p>
@@ -189,7 +170,7 @@
     </footer>
 
 
-    <!-- JavaScript -->
+   
     <script src="script.js"></script>
 
 </body>

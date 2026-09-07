@@ -12,19 +12,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
+<body class="desconectado-global">
 
+    <!-- HEADER -->
+    <header id="header">
 
-    <header>
         <h1>AMP-GUARD</h1>
+
         <p>Monitor para el amplificador</p>
+
     </header>
 
 
     <main>
 
-        
-
+        <!-- ESTADO -->
         <section class="estado-panel">
 
             <h2>Estado del sistema</h2>
@@ -36,49 +38,59 @@
         </section>
 
 
+        <!-- MEDICIONES -->
         <section class="mediciones">
 
             <div class="tarjeta">
+
                 <span class="icono">⚡</span>
 
                 <h3>Voltaje</h3>
 
                 <p id="voltaje">0 V</p>
+
             </div>
 
 
             <div class="tarjeta">
+
                 <span class="icono">🔌</span>
 
                 <h3>Corriente</h3>
 
                 <p id="corriente">0 A</p>
+
             </div>
 
 
             <div class="tarjeta">
+
                 <span class="icono">🔥</span>
 
                 <h3>Cachubi</h3>
 
                 <p id="potencia">0 W</p>
+
             </div>
 
 
             <div class="tarjeta">
+
                 <span class="icono">🌡️</span>
 
                 <h3>Horny</h3>
 
                 <p id="temperatura">0 °C</p>
+
             </div>
 
         </section>
 
 
+        <!-- AUDIO -->
         <section class="panel">
 
-            <h2> Nivel de audio</h2>
+            <h2>Nivel de audio</h2>
 
             <div class="barra">
 
@@ -91,8 +103,7 @@
         </section>
 
 
-    
-
+        <!-- GRÁFICA -->
         <section class="panel">
 
             <h2>Monitor en tiempo real</h2>
@@ -102,8 +113,7 @@
         </section>
 
 
- 
-
+        <!-- CONTROL -->
         <section class="panel">
 
             <h2>Control del sistema</h2>
@@ -111,31 +121,41 @@
             <div class="controles">
 
                 <button id="btnVentiladorOn"
-                        onclick="activarVentilador()">
+                    onclick="activarVentilador()">
+
                     Encender ventilador
+
                 </button>
 
 
                 <button id="btnVentiladorOff"
-                        onclick="desactivarVentilador()">
-                     Apagar ventilador
+                    onclick="desactivarVentilador()">
+
+                    Apagar ventilador
+
                 </button>
 
 
                 <button id="btnPrueba"
-                        onclick="iniciarPrueba()">
-                     Iniciar prueba
+                    onclick="iniciarPrueba()">
+
+                    Iniciar prueba
+
                 </button>
 
             </div>
 
+
             <p id="ventilador">
-                💨 Ventilador: DESCONECTADO
+
+                Ventilador: DESCONECTADO
+
             </p>
 
         </section>
 
 
+        <!-- ALERTAS -->
         <section class="panel">
 
             <h2>Alertas</h2>
@@ -143,7 +163,9 @@
             <div id="alertas">
 
                 <div class="alerta">
+
                     Esperando conexión con el ESP32...
+
                 </div>
 
             </div>
@@ -153,8 +175,6 @@
     </main>
 
 
-
-
     <footer>
 
         <p>AMP-GUARD © 2026</p>
@@ -162,17 +182,13 @@
         <p>
             Sistema de monitoreo basado en ESP32
         </p>
-        <p></p>
-        <p>
-            Victoria Sánchez Arriaga, Ariel Sánchez Avila, Irving Aguayo Perez,
-        </p>
-        <p>Jesus Daniel Lumbreraas Hernandez y Jose de Jesus Santillan Castelaso</p>
+
     </footer>
 
 
-   
     <script src="script.js"></script>
 
 </body>
 
 </html>
+

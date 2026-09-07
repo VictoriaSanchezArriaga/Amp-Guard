@@ -1,8 +1,3 @@
-
-/* =====================================
-   VARIABLES
-   ===================================== */
-
 let voltaje = 0;
 let corriente = 0;
 let temperatura = 0;
@@ -13,48 +8,21 @@ let tiempoGrafica = 0;
 let conectado = false;
 
 
-/* =====================================
-   CONFIGURACIÓN DE CONEXIÓN
-   ===================================== */
 
-/*
-   Tiempo máximo sin recibir datos
-   antes de considerar desconectado.
-*/
 const TIEMPO_LIMITE_DESCONEXION = 10000;
 
-
-/*
-   Cuando está conectado:
-   consultar cada 1 segundo.
-*/
 const INTERVALO_CONECTADO = 1000;
 
-
-/*
-   Cuando está desconectado:
-   intentar nuevamente cada 3 segundos.
-*/
 const INTERVALO_DESCONECTADO = 3000;
 
-
-/* =====================================
-   CONTROL DE INTERVALO
-   ===================================== */
 
 let intervaloConsulta = null;
 
 
-/*
-   Última vez que recibimos
-   correctamente información.
-*/
-let ultimoTiempoRespuesta = Date.now();
+
+let ultimoTiempoRespuesta = 0;
 
 
-/* =====================================
-   ELEMENTOS HTML
-   ===================================== */
 
 const voltajeHTML =
     document.getElementById("voltaje");
@@ -84,8 +52,6 @@ const ventiladorHTML =
     document.getElementById("ventilador");
 
 
-/* BOTONES */
-
 const btnVentiladorOn =
     document.getElementById("btnVentiladorOn");
 
@@ -96,11 +62,41 @@ const btnPrueba =
     document.getElementById("btnPrueba");
 
 
-/* =====================================
-   FUNCIÓN PARA CAMBIAR INTERVALO
-   ===================================== */
 
-function cambiarIntervalo(nuevoTiempoMs) {
+
+function cambiarTemaConectado() {
+
+
+    document.body.classList.remove(
+        "desconectado-global"
+    );
+
+
+    document.body.classList.add(
+        "conectado-global"
+    );
+
+}
+
+
+
+function cambiarTemaDesconectado() {
+
+
+    document.body.classList.remove(
+        "conectado-global"
+    );
+
+
+    document.body.classList.add(
+        "desconectado-global"
+    );
+
+}
+
+
+
+function cambiarIntervalo(tiempo) {
 
     if (intervaloConsulta !== null) {
 
@@ -112,60 +108,39 @@ function cambiarIntervalo(nuevoTiempoMs) {
     intervaloConsulta =
         setInterval(
             consultarSenal,
-            nuevoTiempoMs
+            tiempo
         );
+
 }
 
-
-/* =====================================
-   CONSULTAR ESP32
-   ===================================== */
 
 async function consultarSenal() {
 
     try {
 
-        /*
-           Realizamos petición al ESP32.
+        const respuesta =
+            await fetch(
+                "/datos",
+                {
+                    cache: "no-store",
 
-           /datos debe existir en el código
-           del servidor ESP32.
-        */
+                    signal:
+                        AbortSignal.timeout(2500)
+                }
+            );
 
-        const respuesta = await fetch(
-            "/datos",
-            {
-                cache: "no-store",
-                signal: AbortSignal.timeout(2500)
-            }
-        );
-
-
-        /*
-           Si el servidor responde con error,
-           consideramos que falló la comunicación.
-        */
 
         if (!respuesta.ok) {
 
             throw new Error(
-                "El ESP32 respondió con error"
+                "ESP32 no respondió correctamente"
             );
 
         }
 
-
-        /*
-           Convertimos la respuesta a JSON.
-        */
-
         const datos =
             await respuesta.json();
 
-
-        /* =================================
-           RECIBIMOS DATOS CORRECTAMENTE
-           ================================= */
 
         voltaje =
             Number(datos.voltaje) || 0;
@@ -180,28 +155,17 @@ async function consultarSenal() {
             Number(datos.nivelAudio) || 0;
 
 
-        /*
-           Guardamos el momento de la última
-           respuesta correcta.
-        */
-
         ultimoTiempoRespuesta =
             Date.now();
-
-
-        /*
-           Si estaba desconectado y ahora
-           respondió el ESP32:
-           lo marcamos como conectado.
-        */
 
         if (!conectado) {
 
             conectado = true;
 
-            /*
-               Volvemos a consultar cada segundo.
-            */
+
+
+            cambiarTemaConectado();
+
 
             cambiarIntervalo(
                 INTERVALO_CONECTADO
@@ -213,68 +177,51 @@ async function consultarSenal() {
 
     catch (error) {
 
-        /*
-           No cambiamos inmediatamente
-           a desconectado.
-
-           Primero esperamos los 10 segundos.
-        */
 
         verificarTiempoLimite();
 
     }
 
 
-    /*
-       Actualizamos la pantalla.
-    */
+  
 
     actualizarInterfaz();
-
-
-    /*
-       Actualizamos gráfica.
-    */
 
     actualizarGrafica();
 
 }
 
 
-/* =====================================
-   VERIFICAR DESCONEXIÓN
-   ===================================== */
 
 function verificarTiempoLimite() {
 
-    const tiempoTranscurrido =
-        Date.now() - ultimoTiempoRespuesta;
+  
+
+    if (ultimoTiempoRespuesta === 0) {
+
+        ultimoTiempoRespuesta =
+            Date.now();
+
+    }
 
 
-    /*
-       Si llevamos más de 10 segundos
-       sin respuesta...
-    */
+    const tiempoSinRespuesta =
+        Date.now() -
+        ultimoTiempoRespuesta;
 
+
+    
     if (
-        tiempoTranscurrido >=
+        tiempoSinRespuesta >=
         TIEMPO_LIMITE_DESCONEXION
     ) {
-
-        /*
-           Si todavía aparecía como conectado,
-           cambiamos a desconectado.
-        */
 
         if (conectado) {
 
             conectado = false;
 
 
-            /*
-               Ponemos las mediciones en cero.
-            */
-
+         
             voltaje = 0;
 
             corriente = 0;
@@ -284,9 +231,11 @@ function verificarTiempoLimite() {
             nivelAudio = 0;
 
 
-            /*
-               Intentar conexión cada 3 segundos.
-            */
+
+            cambiarTemaDesconectado();
+
+
+            
 
             cambiarIntervalo(
                 INTERVALO_DESCONECTADO
@@ -299,38 +248,17 @@ function verificarTiempoLimite() {
 }
 
 
-/* =====================================
-   ACTUALIZAR INTERFAZ
-   ===================================== */
-
 function actualizarInterfaz() {
-
-    /*
-       Comprobar primero si se perdió
-       la conexión.
-    */
 
     verificarTiempoLimite();
 
 
-    /* =================================
-       ESP32 DESCONECTADO
-       ================================= */
-
     if (!conectado) {
 
-        /*
-           🩷 ACTIVAR TEMA ROSA
-        */
+      
 
-        document.body.classList.add(
-            "desconectado-global"
-        );
+        cambiarTemaDesconectado();
 
-
-        /*
-           Estado
-        */
 
         estadoHTML.className =
             "estado desconectado";
@@ -338,10 +266,6 @@ function actualizarInterfaz() {
         estadoHTML.innerHTML =
             "🩷 ESP32 DESCONECTADO";
 
-
-        /*
-           Mediciones
-        */
 
         voltajeHTML.innerHTML =
             "0 V";
@@ -356,10 +280,6 @@ function actualizarInterfaz() {
             "0 °C";
 
 
-        /*
-           Audio
-        */
-
         nivelAudioHTML.style.width =
             "0%";
 
@@ -367,17 +287,12 @@ function actualizarInterfaz() {
             "0 %";
 
 
-        /*
-           Ventilador
-        */
 
         ventiladorHTML.innerHTML =
             "💨 Ventilador: DESCONECTADO";
 
 
-        /*
-           Desactivar botones
-        */
+    
 
         btnVentiladorOn.disabled = true;
 
@@ -386,13 +301,10 @@ function actualizarInterfaz() {
         btnPrueba.disabled = true;
 
 
-        /*
-           Alerta
-        */
 
         alertasHTML.innerHTML =
             '<div class="alerta">' +
-            '⚠️ Sin señal del ESP32 por más de 10 segundos.' +
+            '⚠️ ESP32 desconectado.' +
             '<br>' +
             '🔄 Intentando reconectar...' +
             '</div>';
@@ -402,23 +314,8 @@ function actualizarInterfaz() {
 
     }
 
+    cambiarTemaConectado();
 
-    /* =================================
-       ESP32 CONECTADO
-       ================================= */
-
-    /*
-       🟢 QUITAR TEMA ROSA
-    */
-
-    document.body.classList.remove(
-        "desconectado-global"
-    );
-
-
-    /*
-       Activar botones
-    */
 
     btnVentiladorOn.disabled = false;
 
@@ -427,10 +324,6 @@ function actualizarInterfaz() {
     btnPrueba.disabled = false;
 
 
-    /*
-       Mostrar mediciones
-    */
-
     voltajeHTML.innerHTML =
         voltaje.toFixed(2) + " V";
 
@@ -438,11 +331,7 @@ function actualizarInterfaz() {
         corriente.toFixed(2) + " A";
 
 
-    /*
-       Calcular potencia
-    */
-
-    let potencia =
+    const potencia =
         voltaje * corriente;
 
 
@@ -450,64 +339,41 @@ function actualizarInterfaz() {
         potencia.toFixed(2) + " W";
 
 
-    /*
-       Temperatura
-    */
 
     temperaturaHTML.innerHTML =
         temperatura.toFixed(1) + " °C";
 
 
-    /*
-       Audio
-    */
 
-    /*
-       Evitamos valores superiores
-       al 100%.
-    */
-
-    let audioSeguro =
+    let audio =
         Math.max(
             0,
-            Math.min(100, nivelAudio)
+            Math.min(
+                100,
+                nivelAudio
+            )
         );
 
 
     nivelAudioHTML.style.width =
-        audioSeguro + "%";
+        audio + "%";
 
 
     porcentajeAudioHTML.innerHTML =
-        audioSeguro + " %";
+        audio + " %";
 
-
-    /*
-       Ventilador
-    */
 
     ventiladorHTML.innerHTML =
         "💨 Ventilador: AUTOMÁTICO";
 
 
-    /*
-       Revisar mediciones.
-    */
 
     revisarLecturasSistema();
 
 }
 
 
-/* =====================================
-   REVISAR LECTURAS
-   ===================================== */
-
 function revisarLecturasSistema() {
-
-    /*
-       Estado inicial
-    */
 
     let estadoTexto =
         "🟢 SISTEMA NORMAL";
@@ -523,9 +389,6 @@ function revisarLecturasSistema() {
         '</p>';
 
 
-    /* =================================
-       VOLTAJE BAJO
-       ================================= */
 
     if (
         voltaje < 11 &&
@@ -535,10 +398,8 @@ function revisarLecturasSistema() {
         estadoTexto =
             "🟡 VOLTAJE BAJO";
 
-
         estadoHTML.className =
             "estado advertencia";
-
 
         mostrarAlerta(
             "⚠️ Voltaje bajo: " +
@@ -549,19 +410,14 @@ function revisarLecturasSistema() {
     }
 
 
-    /* =================================
-       VOLTAJE ALTO
-       ================================= */
 
     if (voltaje > 15) {
 
         estadoTexto =
             "🔴 VOLTAJE ALTO";
 
-
         estadoHTML.className =
             "estado peligro";
-
 
         mostrarAlerta(
             "🚨 Voltaje excesivo: " +
@@ -572,9 +428,6 @@ function revisarLecturasSistema() {
     }
 
 
-    /* =================================
-       TEMPERATURA ELEVADA
-       ================================= */
 
     if (
         temperatura > 60 &&
@@ -584,10 +437,8 @@ function revisarLecturasSistema() {
         estadoTexto =
             "🟡 TEMPERATURA ELEVADA";
 
-
         estadoHTML.className =
             "estado advertencia";
-
 
         mostrarAlerta(
             "⚠️ Temperatura elevada: " +
@@ -598,19 +449,13 @@ function revisarLecturasSistema() {
     }
 
 
-    /* =================================
-       SOBRECALENTAMIENTO
-       ================================= */
-
     if (temperatura > 70) {
 
         estadoTexto =
             "🔴 SOBRECALENTAMIENTO";
 
-
         estadoHTML.className =
             "estado peligro";
-
 
         mostrarAlerta(
             "🚨 Temperatura crítica: " +
@@ -621,19 +466,14 @@ function revisarLecturasSistema() {
     }
 
 
-    /* =================================
-       SOBRECORRIENTE
-       ================================= */
 
     if (corriente > 15) {
 
         estadoTexto =
             "🔴 SOBRECORRIENTE";
 
-
         estadoHTML.className =
             "estado peligro";
-
 
         mostrarAlerta(
             "🚨 Corriente excesiva: " +
@@ -644,19 +484,11 @@ function revisarLecturasSistema() {
     }
 
 
-    /*
-       Mostrar estado.
-    */
-
     estadoHTML.innerHTML =
         estadoTexto;
 
 }
 
-
-/* =====================================
-   MOSTRAR ALERTA
-   ===================================== */
 
 function mostrarAlerta(mensaje) {
 
@@ -668,15 +500,8 @@ function mostrarAlerta(mensaje) {
 }
 
 
-/* =====================================
-   VENTILADOR ENCENDIDO
-   ===================================== */
 
 function activarVentilador() {
-
-    /*
-       No hacer nada si está desconectado.
-    */
 
     if (!conectado) {
 
@@ -693,17 +518,13 @@ function activarVentilador() {
         .catch(() => {
 
             console.log(
-                "No se pudo enviar comando"
+                "Error enviando comando"
             );
 
         });
 
 }
 
-
-/* =====================================
-   VENTILADOR APAGADO
-   ===================================== */
 
 function desactivarVentilador() {
 
@@ -722,17 +543,12 @@ function desactivarVentilador() {
         .catch(() => {
 
             console.log(
-                "No se pudo enviar comando"
+                "Error enviando comando"
             );
 
         });
 
 }
-
-
-/* =====================================
-   INICIAR PRUEBA
-   ===================================== */
 
 function iniciarPrueba() {
 
@@ -747,7 +563,7 @@ function iniciarPrueba() {
         .catch(() => {
 
             console.log(
-                "No se pudo iniciar la prueba"
+                "Error iniciando prueba"
             );
 
         });
@@ -755,76 +571,81 @@ function iniciarPrueba() {
 }
 
 
-/* =====================================
-   GRÁFICA
-   ===================================== */
 
 const ctx =
     document.getElementById("grafica");
 
 
 const grafica =
-    new Chart(ctx, {
+    new Chart(
+        ctx,
+        {
 
-        type: "line",
+            type: "line",
 
-        data: {
+            data: {
 
-            labels: [],
+                labels: [],
 
-            datasets: [
+                datasets: [
 
-                {
+                    {
 
-                    label: "Voltaje (V)",
+                        label:
+                            "Voltaje (V)",
 
-                    data: [],
+                        data: [],
 
-                    tension: 0.2,
+                        tension: 0.2,
 
-                    borderColor: "#3498db",
+                        borderColor:
+                            "#3498db",
 
-                    backgroundColor:
-                        "rgba(52,152,219,0.15)",
+                        backgroundColor:
+                            "rgba(52,152,219,0.15)",
 
-                    fill: true
+                        fill: true
 
-                },
-
-
-                {
-
-                    label: "Temperatura (°C)",
-
-                    data: [],
-
-                    tension: 0.2,
-
-                    borderColor: "#e74c3c",
-
-                    backgroundColor:
-                        "rgba(231,76,60,0.15)",
-
-                    fill: true
-
-                }
-
-            ]
-
-        },
+                    },
 
 
-        options: {
+                    {
 
-            responsive: true,
+                        label:
+                            "Temperatura (°C)",
 
-            animation: false,
+                        data: [],
 
-            scales: {
+                        tension: 0.2,
 
-                y: {
+                        borderColor:
+                            "#e74c3c",
 
-                    beginAtZero: true
+                        backgroundColor:
+                            "rgba(231,76,60,0.15)",
+
+                        fill: true
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                animation: false,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true
+
+                    }
 
                 }
 
@@ -832,48 +653,31 @@ const grafica =
 
         }
 
-    });
+    );
 
-
-/* =====================================
-   ACTUALIZAR GRÁFICA
-   ===================================== */
 
 function actualizarGrafica() {
 
     tiempoGrafica++;
 
 
-    /*
-       Agregar tiempo.
-    */
-
     grafica.data.labels.push(
         tiempoGrafica + " s"
     );
 
 
-    /*
-       Agregar voltaje.
-    */
-
-    grafica.data.datasets[0].data.push(
-        voltaje
-    );
+    grafica.data.datasets[0]
+        .data
+        .push(voltaje);
 
 
-    /*
-       Agregar temperatura.
-    */
-
-    grafica.data.datasets[1].data.push(
-        temperatura
-    );
+    grafica.data.datasets[1]
+        .data
+        .push(temperatura);
 
 
     /*
-       Mantener únicamente
-       los últimos 20 datos.
+       Máximo 20 puntos.
     */
 
     if (
@@ -883,13 +687,14 @@ function actualizarGrafica() {
         grafica.data.labels.shift();
 
 
-        grafica.data.datasets.forEach(
-            dataset => {
+        grafica.data.datasets
+            .forEach(
+                dataset => {
 
-                dataset.data.shift();
+                    dataset.data.shift();
 
-            }
-        );
+                }
+            );
 
     }
 
@@ -899,25 +704,11 @@ function actualizarGrafica() {
 }
 
 
-/* =====================================
-   INICIO
-   ===================================== */
-
-
-/*
-   Empezamos intentando conectar
-   cada segundo.
-*/
 
 cambiarIntervalo(
     INTERVALO_CONECTADO
 );
 
-
-/*
-   Revisar la conexión cada segundo,
-   aunque no haya petición nueva.
-*/
 
 setInterval(
     verificarTiempoLimite,
@@ -925,9 +716,7 @@ setInterval(
 );
 
 
-/*
-   Primera consulta inmediatamente.
-*/
+
 
 consultarSenal();
 

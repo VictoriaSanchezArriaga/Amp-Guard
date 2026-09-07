@@ -1,7 +1,4 @@
 
-/* =====================================
-   CONFIGURACIÓN GENERAL
-   ===================================== */
 
 * {
     box-sizing: border-box;
@@ -10,23 +7,23 @@
 }
 
 
+
 body {
 
     font-family: Arial, sans-serif;
 
-    background: #101010;
+    background-color: #101010;
 
     color: white;
+
+    min-height: 100vh;
 
     transition:
         background-color 0.6s ease,
         color 0.6s ease;
+
 }
 
-
-/* =====================================
-   HEADER
-   ===================================== */
 
 header {
 
@@ -34,14 +31,17 @@ header {
 
     padding: 30px;
 
-    background: #181818;
+    background-color: #181818;
 
-    border-bottom: 2px solid #333;
+    color: white;
+
+    border-bottom: 3px solid #333;
 
     transition:
         background-color 0.6s ease,
         color 0.6s ease,
         border-color 0.6s ease;
+
 }
 
 
@@ -61,9 +61,7 @@ header p {
 }
 
 
-/* =====================================
-   CONTENEDOR PRINCIPAL
-   ===================================== */
+
 
 main {
 
@@ -76,9 +74,6 @@ main {
 }
 
 
-/* =====================================
-   ESTADO DEL SISTEMA
-   ===================================== */
 
 .estado-panel {
 
@@ -102,18 +97,17 @@ main {
     font-weight: bold;
 
     transition:
-        background 0.5s ease,
-        border-color 0.5s ease,
-        color 0.5s ease;
+        background-color 0.5s ease,
+        color 0.5s ease,
+        border-color 0.5s ease;
 
 }
 
 
-/* SISTEMA NORMAL */
 
 .normal {
 
-    background: #123d1d;
+    background-color: #123d1d;
 
     border: 2px solid #2ecc71;
 
@@ -122,11 +116,10 @@ main {
 }
 
 
-/* ADVERTENCIA */
 
 .advertencia {
 
-    background: #4a3b08;
+    background-color: #4a3b08;
 
     border: 2px solid #f1c40f;
 
@@ -135,11 +128,9 @@ main {
 }
 
 
-/* PELIGRO */
-
 .peligro {
 
-    background: #4a1111;
+    background-color: #4a1111;
 
     border: 2px solid #e74c3c;
 
@@ -148,22 +139,20 @@ main {
 }
 
 
-/* DESCONECTADO */
+
 
 .desconectado {
 
-    background: #ff69b4 !important;
+    background-color: #ff69b4 !important;
 
     border: 2px solid #c71585 !important;
 
-    color: #000 !important;
+    color: #000000 !important;
 
 }
 
 
-/* =====================================
-   MEDICIONES
-   ===================================== */
+
 
 .mediciones {
 
@@ -181,7 +170,7 @@ main {
 
 .tarjeta {
 
-    background: #1c1c1c;
+    background-color: #1c1c1c;
 
     padding: 25px;
 
@@ -192,10 +181,10 @@ main {
     border: 1px solid #333;
 
     transition:
-        0.3s,
         background-color 0.6s ease,
         border-color 0.6s ease,
-        color 0.6s ease;
+        color 0.6s ease,
+        transform 0.3s ease;
 
 }
 
@@ -232,13 +221,10 @@ main {
 }
 
 
-/* =====================================
-   PANELES
-   ===================================== */
 
 .panel {
 
-    background: #1c1c1c;
+    background-color: #1c1c1c;
 
     margin-top: 25px;
 
@@ -263,9 +249,9 @@ main {
 }
 
 
-/* =====================================
+/* =========================================
    AUDIO
-   ===================================== */
+   ========================================= */
 
 .barra {
 
@@ -273,7 +259,7 @@ main {
 
     height: 25px;
 
-    background: #333;
+    background-color: #333;
 
     border-radius: 20px;
 
@@ -288,7 +274,7 @@ main {
 
     width: 0%;
 
-    background: #2ecc71;
+    background-color: #2ecc71;
 
     transition:
         width 0.2s ease,
@@ -307,10 +293,6 @@ main {
 
 }
 
-
-/* =====================================
-   BOTONES
-   ===================================== */
 
 .controles {
 
@@ -331,7 +313,7 @@ button {
 
     border-radius: 10px;
 
-    background: #333;
+    background-color: #333;
 
     color: white;
 
@@ -340,7 +322,7 @@ button {
     font-size: 16px;
 
     transition:
-        background 0.3s ease,
+        background-color 0.3s ease,
         opacity 0.3s ease;
 
 }
@@ -348,7 +330,7 @@ button {
 
 button:hover {
 
-    background: #555;
+    background-color: #555;
 
 }
 
@@ -362,9 +344,6 @@ button:disabled {
 }
 
 
-/* =====================================
-   ALERTAS
-   ===================================== */
 
 #alertas {
 
@@ -381,7 +360,7 @@ button:disabled {
 
     border-radius: 10px;
 
-    background: #451414;
+    background-color: #451414;
 
     border-left: 5px solid #e74c3c;
 
@@ -397,9 +376,7 @@ button:disabled {
 }
 
 
-/* =====================================
-   FOOTER
-   ===================================== */
+
 
 footer {
 
@@ -409,7 +386,7 @@ footer {
 
     margin-top: 30px;
 
-    background: #181818;
+    background-color: #181818;
 
     color: #777;
 
@@ -420,152 +397,191 @@ footer {
 }
 
 
-/* =====================================
-   🩷 TEMA ROSA - ESP32 DESCONECTADO
-   ===================================== */
 
 body.desconectado-global {
 
-    background: #ffb6c1 !important;
+    background-color: #ffb6c1 !important;
 
-    color: #000 !important;
+    color: #000000 !important;
 
 }
 
 
-/* HEADER ROSA */
 
 body.desconectado-global header {
 
-    background: #ff8fab !important;
+    background-color: #ff69b4 !important;
 
-    color: #000 !important;
+    color: #000000 !important;
 
-    border-color: #ff1493 !important;
+    border-bottom: 3px solid #c71585 !important;
 
 }
+
+
+
+body.desconectado-global header h1 {
+
+    color: #000000 !important;
+
+}
+
 
 
 body.desconectado-global header p {
 
-    color: #333 !important;
+    color: #000000 !important;
 
 }
 
 
-/* TARJETAS ROSAS */
+
+body.desconectado-global .estado-panel h2 {
+
+    color: #000000 !important;
+
+}
+
+
 
 body.desconectado-global .tarjeta {
 
-    background: #ffc0cb !important;
+    background-color: #ffc0cb !important;
 
-    color: #000 !important;
+    color: #000000 !important;
 
     border-color: #ff69b4 !important;
 
 }
+
 
 
 body.desconectado-global .tarjeta h3 {
 
-    color: #333 !important;
+    color: #000000 !important;
 
 }
+
 
 
 body.desconectado-global .tarjeta p {
 
-    color: #000 !important;
+    color: #000000 !important;
 
 }
 
 
-/* PANELES ROSAS */
 
 body.desconectado-global .panel {
 
-    background: #ffc0cb !important;
+    background-color: #ffc0cb !important;
 
-    color: #000 !important;
+    color: #000000 !important;
 
     border-color: #ff69b4 !important;
 
 }
 
 
-/* TEXTOS ROSAS */
 
-body.desconectado-global h1,
-body.desconectado-global h2,
-body.desconectado-global h3,
-body.desconectado-global p {
 
-    color: #000 !important;
+body.desconectado-global .panel h2 {
+
+    color: #000000 !important;
 
 }
 
 
-/* BARRA DE AUDIO ROSA */
 
 body.desconectado-global .barra {
 
-    background: #ff69b4 !important;
+    background-color: #ff69b4 !important;
 
 }
+
 
 
 body.desconectado-global .nivel {
 
-    background: #c71585 !important;
+    background-color: #c71585 !important;
 
 }
 
 
-/* BOTONES ROSAS */
 
 body.desconectado-global button {
 
-    background: #c71585 !important;
+    background-color: #c71585 !important;
 
     color: white !important;
 
 }
 
 
-body.desconectado-global button:hover {
-
-    background: #a50f6d !important;
-
-}
-
-
-/* ALERTA ROSA */
 
 body.desconectado-global .alerta {
 
-    background: #ff8fab !important;
+    background-color: #ff8fab !important;
+
+    color: #000000 !important;
 
     border-left-color: #c71585 !important;
 
-    color: #000 !important;
-
 }
 
 
-/* FOOTER ROSA */
 
 body.desconectado-global footer {
 
-    background: #ff8fab !important;
+    background-color: #ff69b4 !important;
 
-    color: #333 !important;
+    color: #000000 !important;
 
 }
 
 
-/* =====================================
-   RESPONSIVE
-   ===================================== */
+
+body.desconectado-global footer p {
+
+    color: #000000 !important;
+
+}
+
+
+
+body.conectado-global {
+
+    background-color: #101010;
+
+    color: white;
+
+}
+
+
+
+body.conectado-global header {
+
+    background-color: #123d1d;
+
+    border-bottom-color: #2ecc71;
+
+}
+
+
+body.conectado-global header h1 {
+
+    color: #2ecc71;
+
+}
+
+
+body.conectado-global header p {
+
+    color: #b7eac5;
+
+}
+
+
 
 @media (max-width: 800px) {
 
